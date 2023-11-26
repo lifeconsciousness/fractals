@@ -1,24 +1,38 @@
 import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const canvas = <HTMLCanvasElement>document.getElementById('myCanvas')
+const context = canvas.getContext('2d')
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const maxIterations = 1000
+const width = canvas.width
+const height = canvas.height
+
+function plotMandelbrot() {
+  for (let Px = 0; Px < width; Px++) {
+    for (let Py = 0; Py < height; Py++) {
+      let x0 = ((Px - width / 2) * 4) / width
+      let y0 = ((Py - height / 2) * 4) / height
+
+      let x = 0
+      let y = 0
+      let iteration = 0
+
+      while (x * x + y * y <= 2 * 2 && iteration < maxIterations) {
+        let xTemp = x * x - y * y + x0
+        y = 2 * x * y + y0
+        x = xTemp
+        iteration++
+      }
+
+      //if reached max iterations then color is 0 else other color is chosen
+      let color = iteration === maxIterations ? 0 : iteration % 265
+
+      if (context) {
+        context.fillStyle = 'rgb(' + color + ',' + color + ',' + color + ')'
+        context.fillRect(Px, Py, 1, 1)
+      }
+    }
+  }
+}
+
+plotMandelbrot()
